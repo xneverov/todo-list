@@ -14,6 +14,7 @@ func main() {
 	if err := db.Init(); err != nil {
 		log.Fatalf("Database initialization error: %v", err)
 	}
+	defer db.Get().Close()
 
 	if err := handlers.StartServer(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
