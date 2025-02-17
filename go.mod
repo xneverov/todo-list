@@ -1,6 +1,6 @@
 module github.com/xneverov/todo-list
 
-go 1.22.3
+go 1.23.5
 
 require (
 	github.com/jmoiron/sqlx v1.4.0

@@ -14,7 +14,7 @@ func NextDate(nowDate, date, repeat string) (string, error) {
 	errIncorrectRepeat := fmt.Errorf("неверный формат правил повторения (repeat): %s", repeat)
 
 	if repeat == "" {
-		return "", fmt.Errorf("нет правил повторения")
+		return "", fmt.Errorf("нет правил повторения (repeat)")
 	}
 
 	now, err := time.Parse(dateFormat, nowDate)
