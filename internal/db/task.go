@@ -6,7 +6,7 @@ import (
 )
 
 func CreateTask(task *models.Task) (string, error) {
-	query := `INSERT INTO scheduler (date, title, comment, repeat) VALUES (?, ?, ?, ?)`
+	const query = `INSERT INTO scheduler (date, title, comment, repeat) VALUES (?, ?, ?, ?)`
 	res, err := db.Exec(query, task.Date, task.Title, task.Description, task.Repeat)
 	if err != nil {
 		return "", err
