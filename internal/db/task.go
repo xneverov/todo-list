@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"github.com/xneverov/todo-list/internal/models"
 	"strconv"
 )
@@ -20,7 +21,7 @@ func CreateTask(task *models.Task) (string, error) {
 	return strconv.FormatInt(id, 10), nil
 }
 
-func GetTask(id string) (models.Task, error) {
+func ReadTask(id string) (models.Task, error) {
 	task := models.Task{}
 
 	const query = `SELECT * FROM scheduler WHERE id = ?`
@@ -31,4 +32,24 @@ func GetTask(id string) (models.Task, error) {
 	}
 
 	return task, nil
+}
+
+func UpdateTask(task *models.Task) error {
+	const query = `UPDATE scheduler SET date = ?, title = ?, comment = ?, repeat = ? WHERE id = ?`
+
+	res, err := db.Exec(query, task.Date, task.Title, task.Description, task.Repeat, task.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New("задача не найдена")
+	}
+
+	return nil
 }
