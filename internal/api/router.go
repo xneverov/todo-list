@@ -12,6 +12,7 @@ func SetupRouter() *http.ServeMux {
 	mux.HandleFunc("/api/nextdate", HandleNextDate)
 	mux.HandleFunc("/api/tasks", HandleTasks)
 	mux.HandleFunc("/api/task", HandleTask)
+	mux.HandleFunc("/api/task/done", HandleTaskComplete)
 
 	return mux
 }

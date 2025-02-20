@@ -24,11 +24,25 @@ func HandleTask(res http.ResponseWriter, req *http.Request) {
 	case http.MethodPut:
 		updateTask(res, req)
 	case http.MethodDelete:
-		//deleteTask(res, req)
+		deleteTask(res, req)
 	default:
 		http.Error(res, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
+}
+
+func HandleTaskComplete(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
+	taskID := req.URL.Query().Get("id")
+
+	if err := db.CompleteTask(taskID); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Задача не найдена"})
+		return
+	}
+
+	_ = json.NewEncoder(res).Encode(struct{}{})
 }
 
 func createTask(res http.ResponseWriter, req *http.Request) {
@@ -61,14 +75,7 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 func readTask(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
-	query := req.URL.Query()
-	taskID := query.Get("id")
-
-	if taskID == "" {
-		res.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Не указан идентификатор задачи"})
-		return
-	}
+	taskID := req.URL.Query().Get("id")
 
 	task, err := db.ReadTask(taskID)
 	if err != nil {
@@ -104,6 +111,20 @@ func updateTask(res http.ResponseWriter, req *http.Request) {
 	}
 
 	res.WriteHeader(http.StatusCreated)
+	_ = json.NewEncoder(res).Encode(struct{}{})
+}
+
+func deleteTask(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
+	taskID := req.URL.Query().Get("id")
+
+	if err := db.DeleteTask(taskID); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Задача не найдена"})
+		return
+	}
+
 	_ = json.NewEncoder(res).Encode(struct{}{})
 }
 

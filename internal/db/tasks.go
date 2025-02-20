@@ -16,7 +16,8 @@ const (
 	queryTasksSearch = `
 		SELECT *
 		FROM scheduler
-		WHERE title LIKE ? OR comment LIKE ? 
+		WHERE title LIKE ? 
+		OR comment LIKE ? 
 		ORDER BY date DESC
 		LIMIT ?`
 

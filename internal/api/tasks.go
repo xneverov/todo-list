@@ -19,9 +19,8 @@ const tasksLimit = 30
 
 func HandleTasks(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
-
-	query := req.URL.Query()
-	search := query.Get("search")
+	
+	search := req.URL.Query().Get("search")
 
 	tasks, err := db.GetTasks(tasksLimit, search)
 	if err != nil {
