@@ -15,12 +15,15 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
-const numOfTasks = 30
+const tasksLimit = 30
 
-func HandleTasks(res http.ResponseWriter, _ *http.Request) {
+func HandleTasks(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
-	tasks, err := db.GetTasks(numOfTasks)
+	query := req.URL.Query()
+	search := query.Get("search")
+
+	tasks, err := db.GetTasks(tasksLimit, search)
 	if err != nil {
 		_ = json.NewEncoder(res).Encode(ErrorResponse{Error: err.Error()})
 		return
