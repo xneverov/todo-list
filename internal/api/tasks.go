@@ -25,6 +25,7 @@ func HandleTasks(res http.ResponseWriter, req *http.Request) {
 
 	tasks, err := db.GetTasks(tasksLimit, search)
 	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(res).Encode(ErrorResponse{Error: err.Error()})
 		return
 	}

@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type createTaskResponse struct {
+type taskResponse struct {
 	ID    *string `json:"id,omitempty"`
 	Error string  `json:"error,omitempty"`
 }
@@ -17,7 +17,7 @@ type createTaskResponse struct {
 func HandleTask(res http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-
+		getTask(res, req)
 	case http.MethodPost:
 		createTask(res, req)
 	case http.MethodDelete:
@@ -28,17 +28,41 @@ func HandleTask(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func getTask(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
+	query := req.URL.Query()
+	taskID := query.Get("id")
+
+	if taskID == "" {
+		res.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Не указан идентификатор задачи"})
+		return
+	}
+
+	task, err := db.GetTask(taskID)
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Задача не найдена"})
+		return
+	}
+
+	_ = json.NewEncoder(res).Encode(task)
+}
+
 func createTask(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
 	var task models.Task
 	if err := json.NewDecoder(req.Body).Decode(&task); err != nil {
 		res.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(res).Encode(createTaskResponse{Error: "Invalid JSON"})
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Invalid JSON"})
 		return
 	}
 
 	if task.Title == "" {
 		res.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(res).Encode(createTaskResponse{Error: "Не указан заголовок задачи"})
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Не указан заголовок задачи"})
 		return
 	}
 
@@ -51,7 +75,7 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 	_, err := time.Parse("20060102", task.Date)
 	if err != nil {
 		res.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(res).Encode(createTaskResponse{Error: "Некорректный формат даты"})
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Некорректный формат даты"})
 		return
 	}
 
@@ -61,7 +85,7 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 		nextDate, err = tasks.NextDate(now, task.Date, task.Repeat)
 		if err != nil {
 			res.WriteHeader(http.StatusBadRequest)
-			_ = json.NewEncoder(res).Encode(createTaskResponse{Error: err.Error()})
+			_ = json.NewEncoder(res).Encode(taskResponse{Error: err.Error()})
 			return
 		}
 	}
@@ -77,11 +101,10 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 	taskID, err := db.CreateTask(&task)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(res).Encode(createTaskResponse{Error: err.Error()})
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: err.Error()})
 		return
 	}
 
-	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(res).Encode(createTaskResponse{ID: &taskID})
+	_ = json.NewEncoder(res).Encode(taskResponse{ID: &taskID})
 }

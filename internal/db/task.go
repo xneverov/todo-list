@@ -19,3 +19,16 @@ func CreateTask(task *models.Task) (string, error) {
 
 	return strconv.FormatInt(id, 10), nil
 }
+
+func GetTask(id string) (models.Task, error) {
+	task := models.Task{}
+
+	const query = `SELECT * FROM scheduler WHERE id = ?`
+
+	err := db.QueryRow(query, id).Scan(&task.ID, &task.Date, &task.Title, &task.Description, &task.Repeat)
+	if err != nil {
+		return task, err
+	}
+
+	return task, nil
+}
