@@ -106,6 +106,7 @@ func calcDaysOfWeek(now, date time.Time, repeat string) (time.Time, error) {
 		delete(availableDays, 7)
 	}
 
+	date = date.AddDate(0, 0, 1)
 	for {
 		day := int(date.Weekday())
 		if _, ok := availableDays[day]; ok && now.Before(date) {
@@ -142,6 +143,7 @@ func calcDaysOfMonth(now, date time.Time, repeat string) (time.Time, error) {
 		}
 	}
 
+	date = date.AddDate(0, 0, 1)
 	for {
 		var lastDay int
 		var penultimateDay int
