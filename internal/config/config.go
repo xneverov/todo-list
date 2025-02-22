@@ -14,9 +14,8 @@ var defaultValues = map[string]string{
 }
 
 func Load() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Ошибка при загрузке .env файла")
+	if err := godotenv.Load(); err != nil {
+		log.Println("Файл .env не найден, используются стандартные значения")
 	}
 }
 
