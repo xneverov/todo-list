@@ -2,9 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/xneverov/todo-list/internal/db"
 	"github.com/xneverov/todo-list/internal/models"
-	"net/http"
 )
 
 type successResponse struct {

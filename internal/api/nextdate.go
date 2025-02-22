@@ -16,9 +16,9 @@ func HandleNextDate(res http.ResponseWriter, req *http.Request) {
 
 	result, err := tasks.NextDate(now, date, repeat)
 	if err != nil {
-		fmt.Fprint(res, err)
+		_, _ = fmt.Fprint(res, err)
 		return
 	}
 
-	fmt.Fprint(res, result)
+	_, _ = fmt.Fprint(res, result)
 }

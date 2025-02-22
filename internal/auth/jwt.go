@@ -2,10 +2,12 @@ package auth
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/xneverov/todo-list/internal/config"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+
+	"github.com/xneverov/todo-list/internal/config"
 )
 
 var secretKey = []byte("axolotl")

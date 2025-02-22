@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/xneverov/todo-list/internal/auth"
 	"net/http"
+
+	"github.com/xneverov/todo-list/internal/auth"
 )
 
 func SetupRouter() *http.ServeMux {

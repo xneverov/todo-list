@@ -1,12 +1,13 @@
 package auth
 
 import (
-	"github.com/xneverov/todo-list/internal/config"
 	"net/http"
+
+	"github.com/xneverov/todo-list/internal/config"
 )
 
 func Middleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+	return func(res http.ResponseWriter, req *http.Request) {
 		password := config.Get("TODO_PASSWORD")
 		if password != "" {
 			var token string
@@ -27,5 +28,5 @@ func Middleware(next http.HandlerFunc) http.HandlerFunc {
 			}
 		}
 		next(res, req)
-	})
+	}
 }

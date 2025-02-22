@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -15,7 +16,9 @@ func main() {
 	if err := db.Init(); err != nil {
 		log.Fatalf("Database initialization error: %v", err)
 	}
-	defer db.Get().Close()
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db.Get())
 
 	port := config.Get("TODO_PORT")
 	if port[0] != ':' {

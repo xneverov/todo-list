@@ -1,9 +1,11 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
-	"github.com/xneverov/todo-list/internal/models"
 	"time"
+
+	"github.com/xneverov/todo-list/internal/models"
 )
 
 const (
@@ -61,7 +63,9 @@ func fetchTasks(query string, args ...interface{}) ([]models.Task, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to query tasks: %w", err)
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		_ = rows.Close()
+	}(rows)
 
 	for rows.Next() {
 		var task models.Task

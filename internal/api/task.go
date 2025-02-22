@@ -3,11 +3,12 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/xneverov/todo-list/internal/db"
 	"github.com/xneverov/todo-list/internal/models"
 	"github.com/xneverov/todo-list/internal/tasks"
-	"net/http"
-	"time"
 )
 
 type taskResponse struct {
@@ -16,6 +17,8 @@ type taskResponse struct {
 }
 
 func HandleTask(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
 	switch req.Method {
 	case http.MethodPost:
 		createTask(res, req)
@@ -26,14 +29,13 @@ func HandleTask(res http.ResponseWriter, req *http.Request) {
 	case http.MethodDelete:
 		deleteTask(res, req)
 	default:
-		http.Error(res, "Invalid request method", http.StatusMethodNotAllowed)
+		res.WriteHeader(http.StatusMethodNotAllowed)
+		_ = json.NewEncoder(res).Encode(taskResponse{Error: "Invalid request method"})
 		return
 	}
 }
 
 func HandleTaskComplete(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
 	taskID := req.URL.Query().Get("id")
 
 	if err := db.CompleteTask(taskID); err != nil {
@@ -46,8 +48,6 @@ func HandleTaskComplete(res http.ResponseWriter, req *http.Request) {
 }
 
 func createTask(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
 	var task models.Task
 	if err := json.NewDecoder(req.Body).Decode(&task); err != nil {
 		res.WriteHeader(http.StatusBadRequest)
@@ -73,8 +73,6 @@ func createTask(res http.ResponseWriter, req *http.Request) {
 }
 
 func readTask(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
 	taskID := req.URL.Query().Get("id")
 
 	task, err := db.ReadTask(taskID)
@@ -88,8 +86,6 @@ func readTask(res http.ResponseWriter, req *http.Request) {
 }
 
 func updateTask(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
 	var task models.Task
 	if err := json.NewDecoder(req.Body).Decode(&task); err != nil {
 		res.WriteHeader(http.StatusBadRequest)
@@ -115,8 +111,6 @@ func updateTask(res http.ResponseWriter, req *http.Request) {
 }
 
 func deleteTask(res http.ResponseWriter, req *http.Request) {
-	res.Header().Set("Content-Type", "application/json")
-
 	taskID := req.URL.Query().Get("id")
 
 	if err := db.DeleteTask(taskID); err != nil {
@@ -130,7 +124,7 @@ func deleteTask(res http.ResponseWriter, req *http.Request) {
 
 func validateTask(task *models.Task) error {
 	if task.Title == "" {
-		return errors.New("Не указан заголовок задачи")
+		return errors.New("не указан заголовок задачи")
 	}
 
 	now := time.Now().Format("20060102")
@@ -141,7 +135,7 @@ func validateTask(task *models.Task) error {
 
 	_, err := time.Parse("20060102", task.Date)
 	if err != nil {
-		return errors.New("Некорректный формат даты")
+		return errors.New("некорректный формат даты")
 	}
 
 	var nextDate string

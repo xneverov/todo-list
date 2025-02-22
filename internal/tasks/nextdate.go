@@ -156,7 +156,7 @@ func calcDaysOfMonth(now, date time.Time, repeat string) (time.Time, error) {
 			penultimateDay = daysInMonth(date) - 1
 		}
 
-		day := int(date.Day())
+		day := date.Day()
 		month := int(date.Month())
 
 		if _, ok := availableDays[day]; ok || day == lastDay || day == penultimateDay {

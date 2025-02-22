@@ -2,10 +2,11 @@ package db
 
 import (
 	"errors"
-	"github.com/xneverov/todo-list/internal/models"
-	"github.com/xneverov/todo-list/internal/tasks"
 	"strconv"
 	"time"
+
+	"github.com/xneverov/todo-list/internal/models"
+	"github.com/xneverov/todo-list/internal/tasks"
 )
 
 func CreateTask(task *models.Task) (string, error) {
@@ -85,7 +86,7 @@ func CompleteTask(id string) error {
 	}
 
 	if task.Repeat == "" {
-		DeleteTask(id)
+		_ = DeleteTask(id)
 		return nil
 	}
 

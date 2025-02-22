@@ -2,10 +2,11 @@ package auth
 
 import (
 	"encoding/json"
-	"github.com/xneverov/todo-list/internal/config"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/xneverov/todo-list/internal/config"
 )
 
 type authResponse struct {
