@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-type SuccessResponse struct {
+type successResponse struct {
 	Tasks []models.Task `json:"tasks"`
 }
 
-type ErrorResponse struct {
+type errorResponse struct {
 	Error string `json:"error"`
 }
 
@@ -19,13 +19,13 @@ const tasksLimit = 30
 
 func HandleTasks(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
-	
+
 	search := req.URL.Query().Get("search")
 
 	tasks, err := db.GetTasks(tasksLimit, search)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(res).Encode(ErrorResponse{Error: err.Error()})
+		_ = json.NewEncoder(res).Encode(errorResponse{Error: err.Error()})
 		return
 	}
 
@@ -33,5 +33,5 @@ func HandleTasks(res http.ResponseWriter, req *http.Request) {
 		tasks = []models.Task{}
 	}
 
-	_ = json.NewEncoder(res).Encode(SuccessResponse{Tasks: tasks})
+	_ = json.NewEncoder(res).Encode(successResponse{Tasks: tasks})
 }

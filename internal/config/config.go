@@ -8,8 +8,9 @@ import (
 )
 
 var defaultValues = map[string]string{
-	"TODO_PORT":   "7540",
-	"TODO_DBFILE": "./storage/scheduler.db",
+	"TODO_PORT":     "7540",
+	"TODO_DBFILE":   "./storage/scheduler.db",
+	"TODO_PASSWORD": "",
 }
 
 func Load() {
