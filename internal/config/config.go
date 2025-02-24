@@ -9,13 +9,13 @@ import (
 
 var defaultValues = map[string]string{
 	"TODO_PORT":     "7540",
-	"TODO_DBFILE":   "./storage/scheduler.db",
+	"TODO_DBFILE":   "./scheduler.db",
 	"TODO_PASSWORD": "",
 }
 
 func Load() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("Файл .env не найден, используются стандартные значения")
+		log.Println("Файл .env не найден")
 	}
 }
 
